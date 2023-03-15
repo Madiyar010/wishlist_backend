@@ -12,7 +12,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
          editable=False)
     email = models.EmailField(_('email address'), unique=True)
     username = models.CharField(max_length=150, unique=True)
-    first_name = models.CharField(max_length=150, blank=True)
+    first_name = models.CharField(max_length=150, blank=True, null=True)
     start_date = models.DateTimeField(auto_now_add=True)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)

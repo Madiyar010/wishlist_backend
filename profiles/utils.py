@@ -4,7 +4,7 @@ from . import serializers
 from friendship.models import FriendRequest, FriendList
 
 
-def send_or_cancel_request(other_user, request):
+def send_or_cancel_request(user, other_user, request):
 
     serializer = serializers.FriendRequestSerializer(data=request.data)
 
@@ -28,5 +28,3 @@ def send_or_cancel_request(other_user, request):
 def remove_friend(other_user, request):
     own_friend_list = FriendList.objects.get(user=request.user)
     own_friend_list.unfriend(other_user)
-
-
