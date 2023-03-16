@@ -3,13 +3,22 @@ from rest_framework.viewsets import ViewSet
 from django.shortcuts import get_object_or_404
 from . import serializers
 from rest_framework.response import Response
-from friendship.models import FriendList, FriendRequest
+from friendship.models import FriendList
 from rest_framework import status
 from . import utils
 from wishes.models import Wish
+from rest_framework.pagination import PageNumberPagination
+from wishes.serializers import WishListSerializer
 
 
-class ProfileViewSet(ViewSet):
+class ProfilePagination(PageNumberPagination):
+    page_size = 8
+    page_query_param = 'page'
+    max_page_size = 100
+
+
+class ProfileViewSet(ViewSet, ProfilePagination):
+
     def list(self, request):
         profiles = Account.objects.all()
         serializer = serializers.ProfileSerializer(profiles, many=True)
@@ -19,14 +28,20 @@ class ProfileViewSet(ViewSet):
         queryset = Account.objects.all()
         account = get_object_or_404(queryset, pk=pk)
         wishes = Wish.objects.filter(owner=account)
-        friend_list = FriendList.objects.get(user=request.user)
-        are_friends = FriendList.are_friends(friend_list, account)
+        are_friends = False
+
         if request.user == account:
             serializer = serializers.OwnProfileSerializer(account)
             return Response(serializer.data)
+        if request.user.is_authenticated:
+            friend_list = FriendList.objects.get(user=request.user)
+            are_friends = FriendList.are_friends(friend_list, account)
 
         serializer = serializers.ProfileSerializer(account)
-        return Response(serializer.data | {'are_friends': are_friends} | {'wishes': wishes.values()})
+        page = self.paginate_queryset(wishes, request)
+        serializer_paginated = WishListSerializer(page, many=True)
+
+        return Response(serializer.data | {'are_friends': are_friends} | {'wishes': serializer_paginated.data})
 
     def partial_update(self, request, pk):
 

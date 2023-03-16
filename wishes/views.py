@@ -3,13 +3,26 @@ from rest_framework import viewsets, permissions, status
 from . import serializers
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
+from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import IsAuthenticated
 
 
-class WishViewSet(viewsets.ViewSet):
+class WishListPagination(PageNumberPagination):
+    page_size = 1
+    page_query_param = 'page'
+    max_page_size = 10000
+
+
+class WishViewSet(viewsets.ViewSet, WishListPagination):
+    permission_classes = [IsAuthenticated]
 
     def list(self, request):
         wishes = Wish.objects.filter(owner=request.user)
-        serializer = serializers.WishListSerializer(wishes, many=True)
+        page = self.paginate_queryset(wishes, request)
+        if page:
+            serializer_paginated = serializers.WishListSerializer(page, many=True)
+            return self.get_paginated_response(serializer_paginated.data)
+        serializer = serializers.WishSerializer(wishes, many=True)
         return Response(serializer.data)
 
     def create(self, request):

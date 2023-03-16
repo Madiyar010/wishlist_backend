@@ -17,6 +17,7 @@ class Account(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_superuser = models.BooleanField(default=False)
+    profile_image = models.ImageField(upload_to='profile_images/', default='profile_images/default_profile_image.png')
 
     objects = CustomAccountManager()
     
