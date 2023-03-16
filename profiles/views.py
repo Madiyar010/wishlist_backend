@@ -9,6 +9,7 @@ from . import utils
 from wishes.models import Wish
 from rest_framework.pagination import PageNumberPagination
 from wishes.serializers import WishListSerializer
+from rest_framework.decorators import api_view
 
 
 class ProfilePagination(PageNumberPagination):
@@ -18,6 +19,17 @@ class ProfilePagination(PageNumberPagination):
 
 
 class ProfileViewSet(ViewSet, ProfilePagination):
+
+    def update(self, request, pk):
+        wish = Wish.objects.get(pk=pk)
+        if not wish.liked_by:
+            wish.liked_by = request.user
+            wish.save()
+        elif wish.liked_by == request.user:
+            wish.liked_by = None
+            wish.save()
+            return Response({'message': 'like removed'})
+        return Response({'message': 'wish liked'})
 
     def list(self, request):
         profiles = Account.objects.all()
@@ -52,3 +64,4 @@ class ProfileViewSet(ViewSet, ProfilePagination):
         if other_user not in friend_list.friends.all():
             return utils.send_or_cancel_request(request.user, other_user, request)
         return utils.remove_friend(other_user, request)
+

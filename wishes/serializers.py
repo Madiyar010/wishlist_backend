@@ -8,7 +8,7 @@ class WishListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Wish
-        fields = ('id', 'name', 'image')
+        fields = ('id', 'name', 'image', 'liked_by')
 
 
 class WishSerializer(serializers.ModelSerializer):
@@ -21,4 +21,4 @@ class WishRetrieveSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Wish
-        fields = ('id', 'name', 'description', 'image')
+        fields = ('id', 'name', 'description', 'image', 'liked_by')

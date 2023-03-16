@@ -8,7 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 
 
 class WishListPagination(PageNumberPagination):
-    page_size = 1
+    page_size = 8
     page_query_param = 'page'
     max_page_size = 10000
 
