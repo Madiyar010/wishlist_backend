@@ -1,7 +1,5 @@
 from rest_framework import serializers
 from .models import Wish
-from .utils import CurrentUserDefault
-from users.models import Account
 
 
 class WishListSerializer(serializers.ModelSerializer):

@@ -9,7 +9,6 @@ from . import utils
 from wishes.models import Wish
 from rest_framework.pagination import PageNumberPagination
 from wishes.serializers import WishListSerializer
-from rest_framework.decorators import api_view
 
 
 class ProfilePagination(PageNumberPagination):
