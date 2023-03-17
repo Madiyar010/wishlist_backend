@@ -1,7 +1,11 @@
 from rest_framework import routers
-from .views import WishViewSet
+from .views import WishViewSet, search_wishes
+from django.urls import path
 
 
 router = routers.SimpleRouter()
 router.register(r'wishes', WishViewSet, basename='Wishes')
-urlpatterns = router.urls
+urlpatterns = [
+    path('search/<str:query>', search_wishes),
+]
+urlpatterns += router.urls
