@@ -8,7 +8,9 @@ from .tokens import account_activation_token
 from users.models import Account
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import force_str
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view
+from django.http import HttpResponseRedirect
+from rest_framework.reverse import reverse
 
 
 class CustomRegisterView(APIView):
@@ -33,18 +35,21 @@ class CustomRegisterView(APIView):
 
 
 @api_view(('PATCH', 'GET'))
-@permission_classes([AllowAny])
 def activate(request, uidb64, token):
     try:
         uid = force_str(urlsafe_base64_decode(uidb64))
         user = Account.objects.get(pk=uid)
     except:
         user = None
-
     if user is not None and account_activation_token.check_token(user.id, token):
         user.is_active = True
         user.save()
-        return Response({'message': 'Activation completed!'})
+        return HttpResponseRedirect(redirect_to=reverse('completed'))
 
     else:
         return Response({'message': 'Activation link is invalid!'})
+
+
+@api_view(('GET',))
+def activation_completed(request):
+    return Response({'message': 'Activation completed!'})

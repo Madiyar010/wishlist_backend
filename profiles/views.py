@@ -63,4 +63,3 @@ class ProfileViewSet(ViewSet, ProfilePagination):
         if other_user not in friend_list.friends.all():
             return utils.send_or_cancel_request(request.user, other_user, request)
         return utils.remove_friend(other_user, request)
-
