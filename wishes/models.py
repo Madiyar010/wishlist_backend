@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 import uuid
+from datetime import datetime
 
 
 class Wish(models.Model):
@@ -18,8 +19,13 @@ class Wish(models.Model):
                                  null=True, blank=True,
                                  related_name='liked_by')
 
+    created_at = models.DateTimeField(auto_now_add=True)
+
     def __str__(self):
         return self.name
+
+    class Meta:
+        ordering = ['-created_at']
 
 
 class Image(models.Model):

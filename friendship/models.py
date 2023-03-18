@@ -17,7 +17,8 @@ class FriendList(models.Model):
     def add_friend(self, account):
         if account not in self.friends.all():
             self.friends.add(account)
-
+            account_friend_list = FriendList.objects.get(user=account)
+            account_friend_list.friends.add(self.user)
             content_type = ContentType.objects.get_for_model(self)
             self.notifications.create(
                 target=self.user,
@@ -29,6 +30,8 @@ class FriendList(models.Model):
     def remove_friend(self, account):
         if account in self.friends.all():
             self.friends.remove(account)
+            account_friend_list = FriendList.objects.get(user=account)
+            account_friend_list.friends.remove(self.user)
 
     def unfriend(self, friend):
         self.remove_friend(friend)

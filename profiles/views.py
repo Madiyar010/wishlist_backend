@@ -9,6 +9,7 @@ from . import utils
 from wishes.models import Wish
 from rest_framework.pagination import PageNumberPagination
 from wishes.serializers import WishListSerializer
+from drf_spectacular.utils import extend_schema
 
 
 class ProfilePagination(PageNumberPagination):
@@ -18,6 +19,7 @@ class ProfilePagination(PageNumberPagination):
 
 
 class ProfileViewSet(ViewSet, ProfilePagination):
+    serializer_class = serializers.ProfileSerializer
 
     def update(self, request, pk):
         wish = Wish.objects.get(pk=pk)
@@ -30,11 +32,13 @@ class ProfileViewSet(ViewSet, ProfilePagination):
             return Response({'message': 'like removed'})
         return Response({'message': 'wish liked'})
 
+    @extend_schema(responses=serializers.ProfileSerializer)
     def list(self, request):
         profiles = Account.objects.all()
         serializer = serializers.ProfileSerializer(profiles, many=True)
         return Response(serializer.data)
 
+    @extend_schema(responses=serializers.OwnProfileSerializer)
     def retrieve(self, request, pk):
         queryset = Account.objects.all()
         account = get_object_or_404(queryset, pk=pk)

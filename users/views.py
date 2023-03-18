@@ -45,7 +45,6 @@ def activate(request, uidb64, token):
         user.is_active = True
         user.save()
         return HttpResponseRedirect(redirect_to=reverse('completed'))
-
     else:
         return Response({'message': 'Activation link is invalid!'})
 
