@@ -1,7 +1,7 @@
 from rest_framework.views import APIView
-from .serializers import RegisterAccountSerializer
+from .serializers import RegisterAccountSerializer, ChangePasswordSerializer
 from rest_framework.response import Response
-from rest_framework import status
+from rest_framework import status, generics
 from rest_framework.permissions import AllowAny
 from .tasks import activate_email
 from .tokens import account_activation_token
@@ -11,11 +11,14 @@ from django.utils.encoding import force_str
 from rest_framework.decorators import api_view
 from django.http import HttpResponseRedirect
 from rest_framework.reverse import reverse
+from drf_spectacular.utils import extend_schema
+from rest_framework.permissions import IsAuthenticated
 
 
 class CustomRegisterView(APIView):
     permission_classes = [AllowAny]
 
+    @extend_schema(request=RegisterAccountSerializer)
     def post(self, request):
         reg_serializer = RegisterAccountSerializer(data=request.data)
         if reg_serializer.is_valid():
@@ -52,3 +55,33 @@ def activate(request, uidb64, token):
 @api_view(('GET',))
 def activation_completed(request):
     return Response({'message': 'Activation completed!'})
+
+
+class ChangePasswordView(generics.UpdateAPIView):
+    serializer_class = ChangePasswordSerializer
+    model = Account
+    permission_classes = (IsAuthenticated,)
+
+    def get_object(self, queryset=None):
+        obj = self.request.user
+        return obj
+
+    def update(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        serializer = self.get_serializer(data=request.data)
+
+        if serializer.is_valid():
+            if not self.object.check_password(serializer.data.get('old_password')):
+                return Response({'old_password': 'Wrong Password.'},
+                                status=status.HTTP_400_BAD_REQUEST)
+
+            self.object.set_password(serializer.data.get('new_password'))
+            self.object.save()
+            response = {
+                'status': 'success',
+                'code': status.HTTP_200_OK,
+                'message': 'Password updated successfully',
+                'data': [],
+            }
+            return Response(response)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

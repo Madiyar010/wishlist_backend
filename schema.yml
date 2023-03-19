@@ -109,60 +109,18 @@ paths:
       operationId: api_register_create
       tags:
       - api
-      security:
-      - jwtAuth: []
-      - {}
-      responses:
-        '200':
-          description: No response body
-  /api/register/activate/{uidb64}/{token}:
-    get:
-      operationId: api_register_activate_retrieve
-      parameters:
-      - in: path
-        name: token
-        schema:
-          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterAccount'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RegisterAccount'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RegisterAccount'
         required: true
-      - in: path
-        name: uidb64
-        schema:
-          type: string
-        required: true
-      tags:
-      - api
-      security:
-      - jwtAuth: []
-      - {}
-      responses:
-        '200':
-          description: No response body
-    patch:
-      operationId: api_register_activate_partial_update
-      parameters:
-      - in: path
-        name: token
-        schema:
-          type: string
-        required: true
-      - in: path
-        name: uidb64
-        schema:
-          type: string
-        required: true
-      tags:
-      - api
-      security:
-      - jwtAuth: []
-      - {}
-      responses:
-        '200':
-          description: No response body
-  /api/register/activation/completed:
-    get:
-      operationId: api_register_activation_completed_retrieve
-      tags:
-      - api
       security:
       - jwtAuth: []
       - {}
@@ -514,6 +472,25 @@ components:
           maxLength: 150
       required:
       - id
+      - username
+    RegisterAccount:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          title: Email address
+          maxLength: 254
+        username:
+          type: string
+          maxLength: 150
+        password:
+          type: string
+          writeOnly: true
+          maxLength: 128
+      required:
+      - email
+      - password
       - username
     TokenObtainPair:
       type: object

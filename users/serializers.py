@@ -35,3 +35,14 @@ class RegisterAccountSerializer(serializers.ModelSerializer):
 
         return super(RegisterAccountSerializer, self).validate(data)
 
+
+class ChangePasswordSerializer(serializers.ModelSerializer):
+
+    old_password = serializers.CharField(required=True)
+    new_password = serializers.CharField(required=True)
+
+    class Meta:
+        model = Account
+        fields = ('old_password', 'new_password')
+        extra_kwargs = {'new_password': {'write_only': True},
+                        'old_password': {'write_only': True}}

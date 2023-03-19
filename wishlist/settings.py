@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'channels',
     'drf_spectacular',
+    'django_rest_passwordreset',
 
     'users.apps.UsersConfig',
     'wishes.apps.WishesConfig',
