@@ -10,15 +10,15 @@ from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import force_str
 from rest_framework.decorators import api_view
 from django.http import HttpResponseRedirect
-from rest_framework.reverse import reverse
 from drf_spectacular.utils import extend_schema
 from rest_framework.permissions import IsAuthenticated
+# from rest_framework_simplejwt.tokens import RefreshToken
 
 
 class CustomRegisterView(APIView):
     permission_classes = [AllowAny]
 
-    @extend_schema(request=RegisterAccountSerializer)
+    @extend_schema(request=RegisterAccountSerializer, responses=RegisterAccountSerializer)
     def post(self, request):
         reg_serializer = RegisterAccountSerializer(data=request.data)
         if reg_serializer.is_valid():
@@ -47,14 +47,19 @@ def activate(request, uidb64, token):
     if user is not None and account_activation_token.check_token(user.id, token):
         user.is_active = True
         user.save()
-        return HttpResponseRedirect(redirect_to=reverse('completed'))
+
+        return HttpResponseRedirect("http://127.0.0.1:3000/completed")
     else:
         return Response({'message': 'Activation link is invalid!'})
 
 
-@api_view(('GET',))
-def activation_completed(request):
-    return Response({'message': 'Activation completed!'})
+# def get_tokens_for_user(user):
+#     refresh = RefreshToken.for_user(user)
+#
+#     return {
+#         'refresh': str(refresh),
+#         'access': str(refresh.access_token),
+#     }
 
 
 class ChangePasswordView(generics.UpdateAPIView):

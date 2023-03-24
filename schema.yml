@@ -87,13 +87,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PatchedProfile'
+              type: integer
           application/x-www-form-urlencoded:
             schema:
-              $ref: '#/components/schemas/PatchedProfile'
+              type: integer
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/PatchedProfile'
+              type: integer
       security:
       - jwtAuth: []
       - {}
@@ -126,7 +126,140 @@ paths:
       - {}
       responses:
         '200':
-          description: No response body
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegisterAccount'
+          description: ''
+  /api/register/change-password/:
+    put:
+      operationId: api_register_change_password_update
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangePassword'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ChangePassword'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ChangePassword'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChangePassword'
+          description: ''
+    patch:
+      operationId: api_register_change_password_partial_update
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedChangePassword'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedChangePassword'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedChangePassword'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChangePassword'
+          description: ''
+  /api/register/password-reset/:
+    post:
+      operationId: api_register_password_reset_create
+      description: |-
+        An Api View which provides a method to request a password reset token based on an e-mail address
+
+        Sends a signal reset_password_token_created when a reset token was created
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Email'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Email'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Email'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Email'
+          description: ''
+  /api/register/password-reset/confirm/:
+    post:
+      operationId: api_register_password_reset_confirm_create
+      description: An Api View which provides a method to reset a password based on
+        a unique token
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordToken'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PasswordToken'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PasswordToken'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PasswordToken'
+          description: ''
+  /api/register/password-reset/validate_token/:
+    post:
+      operationId: api_register_password_reset_validate_token_create
+      description: An Api View which provides a method to verify that a token is valid
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResetToken'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ResetToken'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ResetToken'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResetToken'
+          description: ''
   /api/search/{query}:
     get:
       operationId: api_search_retrieve
@@ -419,6 +552,24 @@ paths:
           description: ''
 components:
   schemas:
+    ChangePassword:
+      type: object
+      properties:
+        old_password:
+          type: string
+        new_password:
+          type: string
+      required:
+      - new_password
+      - old_password
+    Email:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+      required:
+      - email
     OwnProfile:
       type: object
       properties:
@@ -442,20 +593,23 @@ components:
       - email
       - id
       - username
-    PatchedProfile:
+    PasswordToken:
       type: object
       properties:
-        id:
+        password:
           type: string
-          format: uuid
-          readOnly: true
-        username:
+        token:
           type: string
-          maxLength: 150
-        first_name:
+      required:
+      - password
+      - token
+    PatchedChangePassword:
+      type: object
+      properties:
+        old_password:
           type: string
-          nullable: true
-          maxLength: 150
+        new_password:
+          type: string
     Profile:
       type: object
       properties:
@@ -492,6 +646,13 @@ components:
       - email
       - password
       - username
+    ResetToken:
+      type: object
+      properties:
+        token:
+          type: string
+      required:
+      - token
     TokenObtainPair:
       type: object
       properties:

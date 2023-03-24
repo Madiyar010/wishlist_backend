@@ -10,9 +10,14 @@ from .constants import *
 
 
 class NotificationConsumer(AsyncJsonWebsocketConsumer):
-
     async def connect(self):
-        print('Connect')
+        self.room_name = self.scope['url_route']['kwargs']['room_name']
+        self.room_group_name = f'notification_{self.room_name}'
+
+        await self.channel_layer.group_add(
+            self.room_group_name,
+            self.channel_name
+        )
         await self.accept()
 
     async def disconnect(self, code):

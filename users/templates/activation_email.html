@@ -1,7 +1,7 @@
 {% autoescape off %}
-Hi {{ user }},
+Hi {{ user.username }},
 
 Please click on the link below to confirm your registration:
 
-{{ protocol }}://{{ domain }}{% url 'Wishes-list' %}?token={{token}}
+{{ protocol }}://{{ domain }}{% url 'activate' uidb64=uid token=token %}
 {% endautoescape %}

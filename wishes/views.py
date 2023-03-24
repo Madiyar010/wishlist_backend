@@ -22,7 +22,7 @@ class WishViewSet(viewsets.ViewSet, WishListPagination):
 
     @extend_schema(responses=serializers.WishListSerializer)
     def list(self, request):
-        print(request.query_params['token'])
+
         wishes = Wish.objects.filter(owner=request.user)
         page = self.paginate_queryset(wishes, request)
         if page:

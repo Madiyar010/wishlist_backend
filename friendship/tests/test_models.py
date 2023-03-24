@@ -80,3 +80,13 @@ class FriendRequestModelTestCase(APITestCase):
         self.first_friend_request.accept()
         self.assertEqual(self.first_friend_request.is_active, False)
 
+    def test_decline_method(self):
+        self.first_friend_request.decline()
+        self.assertEqual(self.first_friend_request.is_active, False)
+
+    def test_cancel_method(self):
+        self.first_friend_request.cancel()
+        self.assertEqual(self.first_friend_request.is_active, False)
+
+    def test_get_cname(self):
+        self.assertEqual(self.first_friend_request.get_cname, 'FriendRequest')

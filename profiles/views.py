@@ -9,7 +9,7 @@ from . import utils
 from wishes.models import Wish
 from rest_framework.pagination import PageNumberPagination
 from wishes.serializers import WishListSerializer
-from drf_spectacular.utils import extend_schema
+from drf_spectacular.utils import extend_schema, extend_schema_field
 
 
 class ProfilePagination(PageNumberPagination):
@@ -21,16 +21,18 @@ class ProfilePagination(PageNumberPagination):
 class ProfileViewSet(ViewSet, ProfilePagination):
     serializer_class = serializers.ProfileSerializer
 
-    def update(self, request, pk):
+    def update(self, request, pk: int):
         wish = Wish.objects.get(pk=pk)
-        if not wish.liked_by:
-            wish.liked_by = request.user
-            wish.save()
+        if wish.owner == request.user or (wish.liked_by and wish.liked_by != request.user):
+            return Response({'message': 'not allowed'}, status=status.HTTP_403_FORBIDDEN)
         elif wish.liked_by == request.user:
             wish.liked_by = None
             wish.save()
             return Response({'message': 'like removed'})
-        return Response({'message': 'wish liked'})
+        else:
+            wish.liked_by = request.user
+            wish.save()
+            return Response({'message': 'wish liked'})
 
     @extend_schema(responses=serializers.ProfileSerializer)
     def list(self, request):
@@ -38,8 +40,8 @@ class ProfileViewSet(ViewSet, ProfilePagination):
         serializer = serializers.ProfileSerializer(profiles, many=True)
         return Response(serializer.data)
 
-    @extend_schema(responses=serializers.OwnProfileSerializer)
-    def retrieve(self, request, pk):
+    @extend_schema(responses=serializers.OwnProfileSerializer, request=int)
+    def retrieve(self, request, pk: int):
         queryset = Account.objects.all()
         account = get_object_or_404(queryset, pk=pk)
         wishes = Wish.objects.filter(owner=account)
@@ -58,7 +60,8 @@ class ProfileViewSet(ViewSet, ProfilePagination):
 
         return Response(serializer.data | {'are_friends': are_friends} | {'wishes': serializer_paginated.data})
 
-    def partial_update(self, request, pk):
+    @extend_schema(request=int)
+    def partial_update(self, request, pk: int):
 
         other_user = Account.objects.get(pk=pk)
         friend_list = FriendList.objects.get(user=request.user)
