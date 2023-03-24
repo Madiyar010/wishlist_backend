@@ -96,14 +96,11 @@ SPECTACULAR_SETTINGS = {
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
-   'default': {
-       'ENGINE': 'django.db.backends.postgresql',
-       'NAME': env('DB_NAME'),
-       'USER': env('DB_USER'),
-       'PASSWORD': env('DB_PASSWORD'),
-       'HOST': env('DB_HOST'),
-       'PORT': env('DB_PORT'),
-   }
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': 'mydatabase', # This is where you put the name of the db file.
+                 # If one doesn't exist, it will be created at migration time.
+    }
 }
 
 
@@ -152,11 +149,11 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_FROM = env('EMAIL_FROM')
-EMAIL_HOST_USER = env('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
+EMAIL_FROM = "madiyar76710@gmail.com"
+EMAIL_HOST_USER = "madiyar76710@gmail.com"
+EMAIL_HOST_PASSWORD = "wjzlljcxuhwurwso"
 
 PASSWORD_RESET_TIMEOUT = 14400
 
