@@ -14,7 +14,7 @@ def activate_email(user_username, user_id, to_email):
     message = render_to_string("activation_email.html", {
         'user': user_username,
         'domain': '127.0.0.1:8000',
-        # 'uid': urlsafe_base64_encode(force_bytes(user_id)),
+        'uid': urlsafe_base64_encode(force_bytes(user_id)),
         'token': account_activation_token.make_token(user_id),
         "protocol": 'http'
     })

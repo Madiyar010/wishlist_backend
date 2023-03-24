@@ -47,7 +47,7 @@ def activate(request, uidb64, token):
     if user is not None and account_activation_token.check_token(user.id, token):
         user.is_active = True
         user.save()
-        return HttpResponseRedirect(redirect_to=reverse('completed'))
+        return HttpResponseRedirect("https://www.google.com")
     else:
         return Response({'message': 'Activation link is invalid!'})
 
