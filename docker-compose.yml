@@ -4,9 +4,9 @@ services:
     restart: always
     image: postgres:latest
     environment:
-      POSTGRES_DB: "wishlist_db"
-      POSTGRES_USER: "postgres"
-      POSTGRES_PASSWORD: "41evizop"
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
     ports:
       - "54321:5432"
     volumes:
