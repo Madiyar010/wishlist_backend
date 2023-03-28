@@ -1,0 +1,26 @@
+version: "3.11"
+services:
+  db:
+    restart: always
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: "wishlist_db"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "41evizop"
+    ports:
+      - "54321:5432"
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data/
+
+  web:
+    build: .
+    user: 'www-data:www-data'
+    volumes:
+      - .:/app/backend
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    tty: true
+    image: wishlist-django
+    command: python manage.py runserver 0.0.0.0:8000

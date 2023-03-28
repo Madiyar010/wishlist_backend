@@ -18,7 +18,7 @@ SECRET_KEY = 'django-insecure-cl(v_!!o#m8+hm1pxntgdy_&w33fs+vx)15by*^#%w7f*^0i8i
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -101,7 +101,7 @@ DATABASES = {
        'NAME': env('DB_NAME'),
        'USER': env('DB_USER'),
        'PASSWORD': env('DB_PASSWORD'),
-       'HOST': env('DB_HOST'),
+       'HOST': 'db',
        'PORT': env('DB_PORT'),
    }
 }
